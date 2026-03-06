@@ -60,6 +60,7 @@ export const validateRegister = (req, res, next) => {
 
 // LOGIN VALIDATION
 export const validateLogin = (req, res, next) => {
+  console.log("validateRegister middleware running");
   const { error, value } = loginSchema.validate(req.body);
 
   if (error) {

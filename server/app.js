@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import connectDB from './config/db.js';
 import userRouter from './routes/userRouter.js';
+import { protect } from './middleware/Authorization/protect.js';
 
 // 1. SETUP ENVIRONMENT VARIABLES FIRST
 dotenv.config();
@@ -18,7 +19,7 @@ app.use(cors());
 app.use(express.json());
 
 // 5. ROUTES
-app.get('/', (req, res) => {
+app.get('/', protect,(req, res) => {
     res.send('Shop SaaS API is running...');
 });
 app.use("/api/auth" , userRouter)
