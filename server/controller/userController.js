@@ -72,3 +72,71 @@ export const login = async (req, res) => {
         res.status(500).json({ success: false, message: "Internal server error" });
     }
 }
+
+export const updateUser = async (req,res)=>{
+    try {
+
+        //Extract the data
+        const {email , name , role} = req.body;
+        console.log({email , name , role})
+
+        const userId = req.user?.id; // The '?' safely checks if req.user exists
+        if (!userId) {
+            return res.status(401).json({ success: false, message: "Login Needed" }); 
+        }
+
+        const user = await User.findById(userId);
+        if(!user){
+            return res.status(404).json({success : false , message : "User don't Exist"})
+        }
+        
+        //Check that the provided email address dont already exists
+        if (email) {
+            const existingUser = await User.findOne({ email });
+            
+            // If we found a user with this email, and their ID doesn't match the logged-in user's ID
+            if (existingUser && existingUser._id.toString() !== userId.toString()) {
+                return res.status(409).json({ success: false, message: "Email is already in use by another account" }); // 409 Conflict is better here
+            }
+        }
+
+        //Update the user object
+        if (name) user.name = name;
+        if (email) user.email = email;
+        if (role) user.role = role;
+
+        await user.save();
+        user.password = undefined;
+
+        res.status(200).json({ success: true, message: "User updated successfully", user });
+
+    } catch (error) {
+        console.log(error.message)
+        res.status(500).json({ success: false, message: "Internal server error" });
+    }
+}
+
+export const deleteUser = async (req, res) => {
+    try {
+        // 1. Extract UserId
+        const userId = req.user?.id; 
+        if (!userId) {
+            return res.status(401).json({ success: false, message: "Login Needed" });
+        }
+
+        // 2. Attempt to delete the user and store the result
+        const deletedUser = await User.findByIdAndDelete(userId);
+
+        // 3. Check if the user actually existed in the database
+        if (!deletedUser) {
+            return res.status(404).json({ success: false, message: "User not found or already deleted" });
+        }
+
+        // 4. Send success with a valid 200 status code
+        res.status(200).json({ success: true, message: "User successfully deleted" });
+
+    } catch (error) {
+        console.log("Delete Error:", error.message);
+        res.status(500).json({ success: false, message: "Internal server error" });
+    }
+}

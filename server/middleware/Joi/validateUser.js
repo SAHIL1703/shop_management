@@ -43,6 +43,25 @@ const loginSchema = Joi.object({
     .required(),
 });
 
+const updateSchema = Joi.object({
+
+  name: Joi.string()
+    .trim()
+    .min(2)
+    .max(50)
+    .required(),
+
+  email : Joi.string()
+    .email()
+    .lowercase()
+    .required(),
+
+  role: Joi.string()
+    .valid("Owner", "Manager", "Salesperson")
+    .default("Owner"),
+  
+})
+
 
 // REGISTER VALIDATION
 export const validateRegister = (req, res, next) => {
@@ -62,6 +81,20 @@ export const validateRegister = (req, res, next) => {
 export const validateLogin = (req, res, next) => {
   console.log("validateRegister middleware running");
   const { error, value } = loginSchema.validate(req.body);
+
+  if (error) {
+    return res.status(400).json({
+      message: error.details[0].message,
+    });
+  }
+
+  req.body = value;
+  next();
+};
+
+// UPDATE VALIDATION
+export const validateUpdateUser = (req, res, next) => {
+  const { error, value } = updateSchema.validate(req.body);
 
   if (error) {
     return res.status(400).json({
