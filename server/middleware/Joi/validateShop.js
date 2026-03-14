@@ -1,17 +1,42 @@
 import Joi from "joi";
 
-const shopValidateSchema = Joi.object({
-  // 1. Business Information
-  shopName: Joi.string().trim().min(2).max(100).required(),
-  shopType: Joi.string().trim().allow("", null),
-  address: Joi.string().trim().allow("", null),
-  shopImage: Joi.string().uri().allow("", null),
+const objectId = Joi.string().pattern(/^[0-9a-fA-F]{24}$/);
 
-  // 2. Owner Authentication Details
-  ownerName: Joi.string().trim().min(2).max(100).required(),
-  email: Joi.string().email().lowercase().required(),
-  password: Joi.string().min(6).max(20).required(),
+const shopValidateSchema = Joi.object({
+  
+  userId : objectId.required(),
+
+  shopName: Joi.string()
+    .trim()
+    .min(2)
+    .max(100)
+    .required(),
+
+  shopType: Joi.string()
+    .trim()
+    .allow("", null),
+
+  address: Joi.string()
+    .trim()
+    .allow("", null),
+
+  shopImage: Joi.string()
+    .uri()
+    .allow("", null),
+
   isActive: Joi.boolean().default(true)
 });
 
-export default shopValidateSchema;
+// SHOP VALIDATION
+export const validateShop = (req, res, next) => {
+  const { error, value } = shopValidateSchema.validate(req.body);
+
+  if (error) {
+    return res.status(400).json({
+      message: error.details[0].message,
+    });
+  }
+
+  req.body = value;
+  next();
+};

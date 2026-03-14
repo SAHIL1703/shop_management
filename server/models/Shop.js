@@ -3,6 +3,12 @@ import mongoose from "mongoose";
 
 const shopSchema = new mongoose.Schema(
   {
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      index: true,
+    },
+
     shopName: {
       type: String,
       required: true,
@@ -32,5 +38,6 @@ const shopSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+shopSchema.index({ userId: 1, shopName: 1 }, { unique: true });
 const Shop = mongoose.model("Shop", shopSchema);
 export default Shop;

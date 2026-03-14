@@ -1,9 +1,12 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
+import morgan from 'morgan';
 import connectDB from './config/db.js';
-import userRouter from './routes/userRouter.js';
 import { protect } from './middleware/Authorization/protect.js';
+import userRouter from './routes/userRouter.js';
+import shopRouter from './routes/shopRouter.js';
+
 
 // 1. SETUP ENVIRONMENT VARIABLES FIRST
 dotenv.config();
@@ -17,12 +20,14 @@ const app = express();
 // 4. MIDDLEWARE
 app.use(cors());
 app.use(express.json());
+app.use(morgan('dev'))
 
 // 5. ROUTES
 app.get('/', protect,(req, res) => {
     res.send('Shop SaaS API is running...');
 });
-app.use("/api/auth" , userRouter)
+app.use("/api/auth" , userRouter);
+app.use("/api/shop" , shopRouter);
 
 // 6. START LISTENING
 const PORT = process.env.PORT || 3000;
