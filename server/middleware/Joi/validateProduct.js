@@ -1,4 +1,4 @@
-import joi, { required } from "joi";
+import joi from "joi";
 
 //This is the ObjectId Validator
 const objectId = joi.string().hex().length(24)
@@ -9,7 +9,7 @@ const productValidateSchema = joi.object({
     //Core Deatails
     name: joi.string().trim().min(2).max(200).required(),
     brand: joi.string().trim().allow("", null),
-    category: joi.string().trim().allow("", null),
+    category: joi.string().trim().required(),
 
     //The Product Image
     productImage: joi.string().uri().allow("", null),
@@ -31,4 +31,16 @@ const productValidateSchema = joi.object({
     ).optional()
 })
 
-export default productValidateSchema;
+// PRODUCT VALIDATION
+export const validateProduct = (req, res, next) => {
+  const { error, value } = productValidateSchema.validate(req.body);
+
+  if (error) {
+    return res.status(400).json({
+      message: error.details[0].message,
+    });
+  }
+
+  req.body = value;
+  next();
+};

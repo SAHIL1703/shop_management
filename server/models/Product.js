@@ -7,7 +7,7 @@ const productSchema = new mongoose.Schema({
   // Core Details
   name: { type: String, required: true },
   brand: { type: String },
-  category: { type: String }, 
+  category: { type: String, required : true }, 
   
   // NEW: The Product Image
   productImage: { 
