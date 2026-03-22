@@ -8,6 +8,7 @@ import userRouter from './routes/userRouter.js';
 import shopRouter from './routes/shopRouter.js';
 import productRouter from './routes/productRouter.js';
 import saleRouter from './routes/saleEntryRouter.js';
+import feedbackRouter from './routes/feedbackRouter.js';
 
 
 // 1. SETUP ENVIRONMENT VARIABLES FIRST
@@ -32,6 +33,7 @@ app.use("/api/auth" , userRouter);
 app.use("/api/shop" , shopRouter);
 app.use("/api/product" , productRouter);
 app.use("/api/sale" , saleRouter);
+app.use("/api/feedback" , feedbackRouter);
 
 // 6. START LISTENING
 const PORT = process.env.PORT || 3000;
