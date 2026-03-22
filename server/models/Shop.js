@@ -34,6 +34,10 @@ const shopSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    salespersons : [{
+      type : mongoose.Schema.Types.ObjectId,
+      ref : 'Labor'
+    }]
   },
   { timestamps: true }
 );

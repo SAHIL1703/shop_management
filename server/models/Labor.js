@@ -7,10 +7,12 @@ const laborSchema = new mongoose.Schema({
   name: { type: String, required: true },
   phone: { type: String, required: true },
 
+  // FIXED: Properly define the nested fields. 
+  // If idProof is mandatory, apply 'required' to its inner fields.
   idProof: {
-    url: String,   // Link to uploaded image
-    type: { type: String }, // e.g., "Aadhar"
-    number: String
+    url: { type: String },                            // Link to uploaded image
+    type: { type: String, required: true },           // e.g., "Aadhar"
+    number: { type: String, required: true } 
   },
 
   joiningDate: { type: Date, default: Date.now },

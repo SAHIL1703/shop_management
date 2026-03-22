@@ -13,7 +13,7 @@ const laborValidateSchema = Joi.object({
     .required(),
 
   idProof: Joi.object({
-    url: Joi.string().uri().required(),
+    url: Joi.string().uri(),
 
     type: Joi.string()
       .valid("Aadhar", "PAN", "Driving License", "Passport")
@@ -38,4 +38,16 @@ const laborValidateSchema = Joi.object({
 
 });
 
-export default laborValidateSchema;
+// SHOP VALIDATION
+export const validateLabor = (req, res, next) => {
+  const { error, value } = laborValidateSchema.validate(req.body);
+
+  if (error) {
+    return res.status(400).json({
+      message: error.details[0].message,
+    });
+  }
+
+  req.body = value;
+  next();
+};

@@ -1,10 +1,11 @@
 import Joi from "joi";
 
-const objectId = Joi.string().pattern(/^[0-9a-fA-F]{24}$/);
+// Reusable custom validation for MongoDB ObjectIds
+const objectId = Joi.string().pattern(/^[0-9a-fA-F]{24}$/, "MongoDB ObjectId");
 
 const shopValidateSchema = Joi.object({
   
-  userId : objectId.required(),
+  userId: objectId.required(),
 
   shopName: Joi.string()
     .trim()
@@ -24,16 +25,23 @@ const shopValidateSchema = Joi.object({
     .uri()
     .allow("", null),
 
-  isActive: Joi.boolean().default(true)
+  isActive: Joi.boolean().default(true),
+
+  // NEW: Validate salespersons as an array of ObjectIds
+  salespersons: Joi.array()
+    .items(objectId)
+    .default([]) 
 });
 
-// SHOP VALIDATION
+// SHOP VALIDATION MIDDLEWARE
 export const validateShop = (req, res, next) => {
-  const { error, value } = shopValidateSchema.validate(req.body);
+  // Using abortEarly: false will check all fields and return all errors at once, rather than stopping at the first one
+  const { error, value } = shopValidateSchema.validate(req.body, { abortEarly: false });
 
   if (error) {
     return res.status(400).json({
-      message: error.details[0].message,
+      // We map through the details to send back a clean string of all validation errors
+      message: error.details.map(err => err.message).join(', '),
     });
   }
 
