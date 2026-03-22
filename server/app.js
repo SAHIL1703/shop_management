@@ -7,6 +7,7 @@ import { protect } from './middleware/Authorization/protect.js';
 import userRouter from './routes/userRouter.js';
 import shopRouter from './routes/shopRouter.js';
 import productRouter from './routes/productRouter.js';
+import saleRouter from './routes/saleEntryRouter.js';
 
 
 // 1. SETUP ENVIRONMENT VARIABLES FIRST
@@ -29,7 +30,8 @@ app.get('/', protect,(req, res) => {
 });
 app.use("/api/auth" , userRouter);
 app.use("/api/shop" , shopRouter);
-app.use("/api/product" , productRouter)
+app.use("/api/product" , productRouter);
+app.use("/api/sale" , saleRouter);
 
 // 6. START LISTENING
 const PORT = process.env.PORT || 3000;

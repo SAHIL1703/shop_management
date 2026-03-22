@@ -234,4 +234,32 @@ export const deleteProduct = async (req, res) => {
 
 
 //We need to add the getAllproduct with the pagination 
-export const getAllProduct =async(req,res)=>{}
+export const getAllProduct =async(req,res)=>{
+    try {
+        const {shopId} = req.params;
+        const userId = req.user.id;
+
+        if(!shopId){
+            return res.status(404).json({success : false , message : "Shop Id not provided"})
+        }
+        if(!userId){
+            return res.status(404).json({success : false , message : "User Id not provided"})
+        }
+
+        const products = await Product.find({shopId})
+        console.log(products)
+
+        if(!products){
+            return res.status(404).josn({success : false , message : "Products Not Present"})
+        }
+
+        res.status(200).json({success : true , message : "Product Fetched" , products})
+        
+    } catch (error) {
+        console.error("Delete Product Error:", error.message);
+        return res.status(500).json({
+            success: false,
+            message: "Internal Server Error: " + error.message,
+        });
+    }
+}
